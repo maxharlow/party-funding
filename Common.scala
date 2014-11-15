@@ -1,8 +1,9 @@
+
 import scala.util.Try
 import scala.collection.immutable.ListMap
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import org.json4s.{JValue, JString, JBool, JNull, JNothing}
+import org.json4s.{JValue, JString, JBool, JNull}
 
 object Common {
 
@@ -72,7 +73,6 @@ object Common {
       case (key, JString(value)) => s"$bind.$key='${tidy(value)}'"
       case (key, JBool(value)) => s"$bind.$key=${value.toString}"
       case (key, JNull) => ""
-      case (key, JNothing) => ""
       case unexpected => throw new Exception(s"Unexpected Json: $unexpected")
     }
     pairs.filter(!_.isEmpty).mkString(",")
