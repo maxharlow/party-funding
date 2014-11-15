@@ -85,7 +85,8 @@ object LinkCompanies extends App {
 
   def selectOfficer(officerData: JValue): JsonMap = {
     ListMap(
-      "name" -> officerData \ "name"
+      "name" -> officerData \ "name",
+      "nationality" -> officerData \ "nationality"
     )
   }
 
