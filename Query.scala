@@ -32,6 +32,7 @@ object Query extends App {
       case "received" => queryReceived
       case "top-donors" => queryTopDonors
       case "top-donations" => queryTopDonations
+      case "new-donors" => queryNewDonors
       case _ => sys.exit()
     }
     val outputFile = StdIn.readLine("Output file:\n=> ")
@@ -204,6 +205,36 @@ object Query extends App {
         row[String]("recipient"),
         row[Int]("date").toString,
         row[BigDecimal]("donationAmount").toString
+      )
+    }
+    results.toList
+  }
+
+
+  /*
+    List new donors (who donated since the given date)
+   */
+  def queryNewDonors(): List[List[String]] = {
+    val date = StdIn.readLine("From date (yyyy-mm-dd):\n=> ").replace("-", "")
+    val query = {
+      s"""
+        MATCH (b)-[d:DONATED_TO]->(r)
+        WITH b, count(d) as donationCount, collect(d) AS ds, collect(r) AS rs
+        WHERE donationCount = 1
+        WITH b, head(ds) AS d, head(rs) AS r
+        WHERE d.acceptedDate >= $date
+        RETURN
+          b.name AS benefactor,
+          r.name AS recipient,
+          d.value / 100.0 AS amount
+        ORDER BY amount DESC
+      """
+    }
+    val results = Cypher(query).apply() map { row =>
+      List(
+        row[String]("benefactor"),
+        row[String]("recipient"),
+        row[BigDecimal]("amount").toString
       )
     }
     results.toList
