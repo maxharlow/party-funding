@@ -226,7 +226,8 @@ object Query extends App {
         RETURN
           b.name AS benefactor,
           r.name AS recipient,
-          d.value / 100.0 AS amount
+          d.value / 100.0 AS amount,
+          d.ecReference AS ecReference
         ORDER BY amount DESC
       """
     }
@@ -234,7 +235,8 @@ object Query extends App {
       List(
         row[String]("benefactor"),
         row[String]("recipient"),
-        row[BigDecimal]("amount").toString
+        row[BigDecimal]("amount").toString,
+        row[String]("ecReference")
       )
     }
     results.toList
