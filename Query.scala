@@ -31,6 +31,7 @@ object Query extends App {
       case "indirect" => queryIndirectDonations
       case "received" => queryReceived
       case "top-donors" => queryTopDonors
+      case "top-corporate-donors" => queryTopCorporateDonors
       case "top-donations" => queryTopDonations
       case "new-donors" => queryNewDonors
       case _ => sys.exit()
@@ -172,6 +173,36 @@ object Query extends App {
       List(
         row[String]("benefactor"),
         row[String]("recipient"),
+        row[Int]("donationsCount").toString,
+        row[BigDecimal]("donationsTotal").toString
+      )
+    }
+    results.toList
+  }
+
+  /*
+    The top ten corporate donors to the given party -- accepted (not received or reported!) since the given date
+   */
+  def queryTopCorporateDonors(): List[List[String]] = {
+    val date = StdIn.readLine("From date (yyyy-mm-dd):\n=> ").replace("-", "")
+    val party = StdIn.readLine("Party:\n=> ")
+    val query = {
+      s"""
+        MATCH (b:Organisation)-[d:DONATED_TO]->(r:Party)
+        WHERE d.acceptedDate >= $date
+        AND d.type <> 'Public Funds'
+        AND r.name = '$party'
+        RETURN
+          b.name AS benefactor,
+          count(d) AS donationsCount,
+          sum(d.value) / 100.0 AS donationsTotal
+        ORDER BY donationsTotal DESC
+        LIMIT 10
+      """
+    }
+    val results = Cypher(query).apply() map { row =>
+      List(
+        row[String]("benefactor"),
         row[Int]("donationsCount").toString,
         row[BigDecimal]("donationsTotal").toString
       )
