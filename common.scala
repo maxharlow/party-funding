@@ -1,4 +1,3 @@
-
 import scala.util.Try
 import scala.collection.immutable.ListMap
 import org.joda.time.DateTime
@@ -32,10 +31,6 @@ object Common {
     cleanName.replaceAll(titlesRegex, "").replaceAll(titlesRegex, "") // apply it twice for titles such as 'the rt hon sir'
   }
 
-  def stripFakePostcodes(postcode: String): String = {
-    postcode.replaceAll("ZZ0 0ZZ|ZZ00ZZ|ZZ1 1ZZ|ZZ11ZZ|AA0 0AA|AA00AA|AA1 1AA|AA11AA", "")
-  }
-
   def nameCheck[A](name: String)(check: String => Try[A]): Try[A] = {
     val names = name.split(" ")
     val middleNames = if (names.length > 2) names.init.tail.toList else Nil
@@ -51,20 +46,6 @@ object Common {
       shortName orElse initalledName orElse initalledDottedName
     }
     else fullNameCheck // if all else fails
-  }
-
-  def asDate(value: String, format: String): String = {
-    val formatPattern = DateTimeFormat.forPattern(format)
-    if (value.isEmpty) ""
-    else DateTime.parse(value, formatPattern).toString("yyyy-MM-dd")
-  }
-
-  def asInt(value: String): String = {
-    value.replaceAll("[^0-9]", "")
-  }
-
-  def asBoolean(value: String): String = {
-    if (value.isEmpty) "false" else "true"
   }
 
   def propertise(bind: String, jsonMap: ListMap[String, JValue]): String = {
