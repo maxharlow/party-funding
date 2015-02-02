@@ -4,7 +4,7 @@ CREATE CONSTRAINT ON (recipient: Recipient) ASSERT recipient.recipientID IS UNIQ
 
 
 USING PERIODIC COMMIT
-LOAD CSV WITH HEADERS FROM 'file:///Users/max/Projects/scrape-pef/pef-donations.csv' AS record
+LOAD CSV WITH HEADERS FROM 'http://github.com/maxharlow/scrape-pef/raw/master/pef-donations.csv' AS record
 
        MERGE (b: Benefactor {benefactorID: record.donorID}) ON CREATE SET
               b.donorType = record.donorType,
@@ -21,9 +21,7 @@ LOAD CSV WITH HEADERS FROM 'file:///Users/max/Projects/scrape-pef/pef-donations.
               b.companyNumber = record.donorCompanyNumber,
               b.address = record.donorAddress,
               b.postcode = record.donorPostcode,
-              b.country = record.donorCountry,
-              b.phoneNumber = record.donorPhoneNumber,
-              b.emailAddress = record.donorEmailAddress
+              b.country = record.donorCountry
 
        MERGE (r: Recipient {recipientID: record.recipientID}) ON CREATE SET
               r.name = record.recipientName,
