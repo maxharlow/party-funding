@@ -1,23 +1,25 @@
 // identifiers are separate for benefactors and (lenders/donors) and recipients ('entities'), but the same across donations and loans  
-CREATE CONSTRAINT ON (benefactor: Benefactor) ASSERT benefactor.benefactorID IS UNIQUE;
+// though benefactor identifiers are next to useless, have many duplicate values with the same identifer -- so use name instead
 CREATE CONSTRAINT ON (recipient: Recipient) ASSERT recipient.recipientID IS UNIQUE;
+CREATE CONSTRAINT ON (benefactor: Benefactor) ASSERT benefactor.name IS UNIQUE;
 
 
 USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM 'https://github.com/maxharlow/scrape-pef/raw/master/pef-loans.csv' AS record
 
-       MERGE (b: Benefactor {benefactorID: record.lenderID}) ON CREATE SET
+       WITH record, ( // if name is blank, construct
+              CASE WHEN record.lenderName = ''
+              THEN replace(record.lenderFirstName + ' ' + record.lenderMiddleName + ' ' + record.lenderLastName, '  ', ' ')
+              ELSE record.lenderName
+              END
+       ) AS lenderName
+
+       MERGE (b: Benefactor {name: record.lenderName}) ON CREATE SET
               b.lenderType = record.lenderType,
               b.title = record.lenderTitle,
               b.firstName = record.lenderFirstName,
               b.middleName = record.lenderMiddleName,
               b.lastName = record.lenderLastName,
-              b.name = ( // if blank, construct
-                    CASE WHEN record.lenderName = ''
-                    THEN replace(record.lenderFirstName + ' ' + record.lenderMiddleName + ' ' + record.lenderLastName, '  ', ' ')
-                    ELSE record.lenderName
-                    END
-              ),
               b.address = record.lenderAddress,
               b.postcode = record.lenderPostcode,
               b.country = record.lenderCountry
