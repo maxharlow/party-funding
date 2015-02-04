@@ -7,16 +7,14 @@ CREATE CONSTRAINT ON (benefactor: Benefactor) ASSERT benefactor.name IS UNIQUE;
 USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM 'https://github.com/maxharlow/scrape-pef/raw/master/pef-donations.csv' AS record
 
-       WITH record, ( // if name is blank, construct
-              CASE WHEN record.donorName = ''
+     WITH record WHERE NOT (record.donorName = '' AND record.donorLastName = '') // exclude aggregate donations and those from unknown sources
+
+     MERGE (b: Benefactor {name:
+              CASE WHEN record.donorName = '' // if name is blank, construct
               THEN replace(record.donorFirstName + ' ' + record.donorMiddleName + ' ' + record.donorLastName, '  ', ' ')
               ELSE record.donorName
               END
-       ) AS donorName
-
-       WHERE record.donorType <> '' // exclude aggregate donations and those from unknown sources
-
-       MERGE (b: Benefactor {name: donorName}) ON CREATE SET
+     }) ON CREATE SET
               b.donorType = record.donorType,
               b.title = record.donorTitle,
               b.firstName = record.donorFirstName,

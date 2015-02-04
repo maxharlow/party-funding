@@ -7,14 +7,12 @@ CREATE CONSTRAINT ON (benefactor: Benefactor) ASSERT benefactor.name IS UNIQUE;
 USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM 'https://github.com/maxharlow/scrape-pef/raw/master/pef-loans.csv' AS record
 
-       WITH record, ( // if name is blank, construct
-              CASE WHEN record.lenderName = ''
+     MERGE (b: Benefactor {name:
+              CASE WHEN record.lenderName = '' // if name is blank, construct
               THEN replace(record.lenderFirstName + ' ' + record.lenderMiddleName + ' ' + record.lenderLastName, '  ', ' ')
               ELSE record.lenderName
               END
-       ) AS lenderName
-
-       MERGE (b: Benefactor {name: record.lenderName}) ON CREATE SET
+     }) ON CREATE SET
               b.lenderType = record.lenderType,
               b.title = record.lenderTitle,
               b.firstName = record.lenderFirstName,
