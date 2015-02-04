@@ -34,27 +34,27 @@ LOAD CSV WITH HEADERS FROM 'https://github.com/maxharlow/scrape-pef/raw/master/p
               ecLastNotifiedDate: toInt(replace(record.ecLastNotifiedDate, '-', '')),
               ecPublishedDate: toInt(replace(record.ecPublishedDate, '-', '')),
               ecReleaseTitle: record.ecReleaseTitle,
-              value: toFloat(replace(record.value, '£', '')), // yes, it's currency represented as floating-point
-	      valueRepaid: toFloat(replace(record.valueRepaid, '£', '')),
-	      valueConverted: toFloat(replace(record.valueConverted, '£', '')),
-	      valueOutstanding: toFloat(replace(record.valueOutstanding, '£', '')),
+              value: toFloat(replace(replace(record.value, ',', ''), '£', '')), // yes, it's currency represented as floating-point
+              valueRepaid: toFloat(replace(replace(record.valueRepaid, ',', ''), '£', '')),
+              valueConverted: toFloat(replace(replace(record.valueRepaid, ',', ''), '£', '')),
+              valueOutstanding: toFloat(replace(replace(record.valueOutstanding, ',', ''), '£', '')),
               type: record.type,
-	      rate: record.rate,
-	      rateFixed: record.rateFixed,
-	      rateVariable: record.rateVariable,
-	      status: record.status,
-	      repaymentTerm: record.repaymentTerm,
+              rate: record.rate,
+              rateFixed: record.rateFixed,
+              rateVariable: record.rateVariable,
+              status: record.status,
+              repaymentTerm: record.repaymentTerm,
               accountingUnitName: record.accountingUnitName,
               accountingUnitID: record.accountingUnitID,
               startDate: toInt(replace(record.startDate, '-', '')),
               endDate: toInt(replace(record.endDate, '-', '')),
-	      repaidDate: toInt(replace(record.repaidDate, '-', '')),
-	      referenceNumber: record.referenceNumber,
-	      notes: record.notes,
-	      additionalInformation: record.additionalInformation,
-	      isReportedDueToAggregation: record.isReportedDueToAggregation,
-	      areReportingUnitsTreatedAsCentralParty: record.areReportingUnitsTreatedAsCentralParty,
-	      hasSecurityBeenGiven: record.hasSecurityBeenGiven
+              repaidDate: toInt(replace(record.repaidDate, '-', '')),
+              referenceNumber: record.referenceNumber,
+              notes: record.notes,
+              additionalInformation: record.additionalInformation,
+              isReportedDueToAggregation: record.isReportedDueToAggregation,
+              areReportingUnitsTreatedAsCentralParty: record.areReportingUnitsTreatedAsCentralParty,
+              hasSecurityBeenGiven: record.hasSecurityBeenGiven
        }]->(r)
 ;
 

@@ -36,7 +36,7 @@ LOAD CSV WITH HEADERS FROM 'https://github.com/maxharlow/scrape-pef/raw/master/p
               ecReportedDate: toInt(replace(record.ecReportedDate, '-', '')),
               ecPublishedDate: toInt(replace(record.ecPublishedDate, '-', '')),
               ecReleaseTitle: record.ecReleaseTitle,
-              value: toFloat(replace(record.value, '£', '')), // yes, it's currency represented as floating-point
+              value: toFloat(replace(replace(record.value, ',', ''), '£', '')), // yes, it's currency represented as floating-point
               type: record.type,
               accountingUnitName: record.accountingUnitName,
               accountingUnitID: record.accountingUnitID,
