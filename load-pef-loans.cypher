@@ -18,6 +18,7 @@ LOAD CSV WITH HEADERS FROM 'https://github.com/maxharlow/scrape-pef/raw/master/p
               b.firstName = record.lenderFirstName,
               b.middleName = record.lenderMiddleName,
               b.lastName = record.lenderLastName,
+              b.companyNumber = record.lenderCompanyNumber,
               b.address = record.lenderAddress,
               b.postcode = record.lenderPostcode,
               b.country = record.lenderCountry

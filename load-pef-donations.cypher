@@ -20,6 +20,7 @@ LOAD CSV WITH HEADERS FROM 'https://github.com/maxharlow/scrape-pef/raw/master/p
               b.firstName = record.donorFirstName,
               b.middleName = record.donorMiddleName,
               b.lastName = record.donorLastName,
+              b.companyNumber = record.donorCompanyNumber,
               b.address = record.donorAddress,
               b.postcode = record.donorPostcode,
               b.country = record.donorCountry
